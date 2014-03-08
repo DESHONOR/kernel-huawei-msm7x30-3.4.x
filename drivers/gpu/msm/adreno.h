@@ -115,6 +115,7 @@ struct adreno_device {
 	struct kgsl_memdesc on_resume_cmd;
 	unsigned int on_resume_ib[3];
 	bool on_resume_issueib;
+	struct work_struct input_work;
 };
 
 #define PERFCOUNTER_FLAG_NONE 0x0

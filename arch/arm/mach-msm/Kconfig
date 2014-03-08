@@ -1710,24 +1710,24 @@ choice
 	default MSM_MEMORY_DEFAULT
 
 config MSM_MEMORY_DEFAULT
-	bool "Enable 352 MB of free RAM"
+	bool "Enable 348 MB of free RAM"
 	help
-	  Enabling this option allow to have 352 MB of free ram.
+	  Enabling this option allow to have 348 MB of free ram.
 
 config MSM_MEMORY_HIGH
-	bool "Enable 360 MB of free RAM"
+	bool "Enable 356 MB of free RAM"
 	help
-	  Enabling this option allow to have 360 MB of free ram.
+	  Enabling this option allow to have 356 MB of free ram.
 
 config MSM_MEMORY_VERY_HIGH
-	bool "Enable 370 MB of free RAM"
+	bool "Enable 366 MB of free RAM"
 	help
-	  Enabling this option allow to have 370 MB of free ram.
+	  Enabling this option allow to have 366 MB of free ram.
 
 config MSM_MEMORY_EXTRA_HIGH
-	bool "Enable 378 MB of free RAM"
+	bool "Enable 374 MB of free RAM"
 	help
-	  Enabling this option allow to have 378 MB of free ram.
+	  Enabling this option allow to have 374 MB of free ram.
 
 endchoice
 
