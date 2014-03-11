@@ -27,9 +27,9 @@
 #ifndef _LINUX_I2C_H
 #define _LINUX_I2C_H
 
-#include <linux/module.h>
 #include <linux/types.h>
 #ifdef __KERNEL__
+#include <linux/module.h>
 #include <linux/mod_devicetable.h>
 #include <linux/device.h>	/* for struct device */
 #include <linux/sched.h>	/* for completion */
