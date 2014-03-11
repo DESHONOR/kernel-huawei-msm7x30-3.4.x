@@ -1,4 +1,4 @@
-/* Copyright (c) 2011, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -164,6 +164,9 @@ enum mt9e013_reg_mode {
 	E013_FINE_CORRECTION
 };
 
+/* < DTS2011070401622 lijuan 20110703 begin */
+/*add OTP arrays that can contain OTP when reading, */
+/*add shading arrays that can contain shading */
 struct mt9e013_reg {
 	const struct mt9e013_i2c_reg_conf *reg_mipi;
 	const unsigned short reg_mipi_size;
@@ -175,5 +178,10 @@ struct mt9e013_reg {
 	const unsigned short reg_prev_size;
 	const struct mt9e013_i2c_reg_conf *reg_snap;
 	const unsigned short reg_snap_size;
+	const struct mt9e013_i2c_reg_conf *reg_shading;
+	const unsigned short reg_shading_size;
+	struct mt9e013_i2c_reg_conf *reg_otp;
+	unsigned short reg_otp_size;
 };
+/* < DTS2011070401622 lijuan 20110703 begin */
 #endif /* MT9E013_H */

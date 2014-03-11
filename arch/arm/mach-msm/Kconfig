@@ -951,10 +951,166 @@ config MACH_FSM9XXX_SURF
 	  chipset based SURF evaluation board and
 	  FFA board.
 
-config MACH_MSM_DUMMY
-	bool "NONE (No device)"
+#Huawei Config Start
+config MACH_MSM7X30_U8800
+       depends on ARCH_MSM7X30
+       depends on !MSM_STACKED_MEMORY
+       depends on HUAWEI_KERNEL   
+       default y
+       bool "MSM7x30 U8800"
+       help
+         Support for the Qualcomm MSM7x30 platform board.
+
+config MACH_MSM7X30_U8800_51
+       depends on ARCH_MSM7X30
+       depends on !MSM_STACKED_MEMORY
+       depends on HUAWEI_KERNEL   
+       default y
+       bool "MSM7x30 U8800_51"
+       help
+         Support for the Qualcomm MSM7x30 platform board.
+
+config MACH_MSM8255_U8800_PRO
+       depends on ARCH_MSM7X30
+       depends on !MSM_STACKED_MEMORY
+       depends on HUAWEI_KERNEL   
+       default y
+       bool "MSM8255 U8800_PRO"
+       help
+         Support for the Qualcomm MSM8255 platform board.
+
+config MACH_MSM8255_U8860
+       depends on ARCH_MSM7X30
+       depends on !MSM_STACKED_MEMORY
+       depends on HUAWEI_KERNEL   
+       default y
+       bool "MSM8255 U8860"
+       help
+         Support for the Qualcomm MSM8255 platform board.
+
+config MACH_MSM8255_C8860
+       depends on ARCH_MSM7X30
+       depends on !MSM_STACKED_MEMORY
+       depends on HUAWEI_KERNEL   
+       default y
+       bool "MSM8255 C8860"
+       help
+         Support for the Qualcomm MSM8255 platform board.
+
+config MACH_MSM8255_U8860LP
+       depends on ARCH_MSM7X30
+       depends on !MSM_STACKED_MEMORY
+       depends on HUAWEI_KERNEL   
+       default y
+       bool "MSM8255 U8860LP"
+       help
+         Support for the Qualcomm MSM8255 platform board.
+
+config MACH_MSM8255_U8860_R
+       depends on ARCH_MSM7X30
+       depends on !MSM_STACKED_MEMORY
+       depends on HUAWEI_KERNEL   
+       default y
+       bool "MSM8255 U8860_R"
+       help
+         Support for the Qualcomm MSM8255 platform board.
+
+config MACH_MSM8255_U8860_51
+       depends on ARCH_MSM7X30
+       depends on !MSM_STACKED_MEMORY
+       depends on HUAWEI_KERNEL   
+       default y
+       bool "MSM8255 U8860_51"
+       help
+         Support for the Qualcomm MSM8255 platform board.
+
+config MACH_MSM8255_U8860_92
+       depends on ARCH_MSM7X30
+       depends on !MSM_STACKED_MEMORY
+       depends on HUAWEI_KERNEL   
+       default y
+       bool "MSM8255 U8860_92"
+       help
+         Support for the Qualcomm MSM8255 platform board.
+
 
 endmenu
+
+config HUAWEI_KEY_TEST
+	bool "HUAWEI auto key test driver"
+	depends on HUAWEI_KERNEL
+	default y
+	help
+	  Select Y if use auto key test.
+
+config HUAWEI_SMEM_SLEEP_LOG
+	bool "HUAWEI smem sleep log driver"
+	depends on HUAWEI_KERNEL
+	default n
+	help
+	  Select Y if use smem sleep log driver.
+
+config HUAWEI_KERNEL_DEBUG
+	bool "HUAWEI kernel debug"
+	depends on HUAWEI_KERNEL
+	default n
+	help
+	  Select Y if print HUAWEI log
+
+config  HUAWEI_KERNEL
+	bool  "HUAWEI BSP"
+	default n
+	
+config HUAWEI_FEATURE_U8800_FM
+	bool "HUAWEI 8800 FM"
+	depends on HUAWEI_KERNEL
+	default n
+	help
+	  if Y ,select HUAWEI_FEATURE_U8800_FM
+
+config HUAWEI_FEATURE_VIBRATOR
+	depends on HUAWEI_KERNEL
+	tristate "Huawei 8800 vibrator"	
+	default n
+	help
+	  if Y ,select HUAWEI_FEATURE_VIBRATOR 
+
+config HUAWEI_SETTING_TIMER_FOR_VIBRATOR_OFF
+	depends on HUAWEI_FEATURE_VIBRATOR
+	tristate "Huawei stop vibratting with timer"	
+	default n
+	help
+	  if Y ,select HUAWEI_SETTING_TIMER_FOR_VIBRATOR_OFF 
+
+config HUAWEI_U8800PP1_WIFI_LOW_CONSUME
+	depends on MACH_MSM7X30_U8800
+	tristate "Huawei config wifi for low consume at PP1 version"	
+	default y
+	help
+	  if Y ,select HUAWEI_U8800PP1_CONFIG_WIFI_LOW_CONSUME 
+
+config  HUAWEI_FEATURE_OEMINFO
+	depends on HUAWEI_KERNEL
+	default y
+	tristate "OEMINFO"
+
+config HUAWEI_POWER_DOWN_CHARGE
+	default y
+	tristate "huawei_power_down_charge"
+	help
+	  Say Y here if you want to support huawei_power_down_charge.
+
+config HUAWEI_RPC_CRASH_DEBUG
+	bool "HUAWEI rpc crash debug"
+        select OPROFILE
+	depends on HUAWEI_KERNEL
+	default n
+	help
+	  Select Y if use rpc related logs.
+#End of Huawei Config
+
+config MACH_MSM_DUMMY
+	bool "NONE (No device)"
 
 source "arch/arm/mach-msm/lge/Kconfig"
 
@@ -1710,24 +1866,24 @@ choice
 	default MSM_MEMORY_DEFAULT
 
 config MSM_MEMORY_DEFAULT
-	bool "Enable 348 MB of free RAM"
+	bool "Enable 352 MB of free RAM"
 	help
-	  Enabling this option allow to have 348 MB of free ram.
+	  Enabling this option allow to have 352 MB of free ram.
 
 config MSM_MEMORY_HIGH
-	bool "Enable 356 MB of free RAM"
+	bool "Enable 360 MB of free RAM"
 	help
-	  Enabling this option allow to have 356 MB of free ram.
+	  Enabling this option allow to have 360 MB of free ram.
 
 config MSM_MEMORY_VERY_HIGH
-	bool "Enable 366 MB of free RAM"
+	bool "Enable 370 MB of free RAM"
 	help
-	  Enabling this option allow to have 366 MB of free ram.
+	  Enabling this option allow to have 370 MB of free ram.
 
 config MSM_MEMORY_EXTRA_HIGH
-	bool "Enable 374 MB of free RAM"
+	bool "Enable 378 MB of free RAM"
 	help
-	  Enabling this option allow to have 374 MB of free ram.
+	  Enabling this option allow to have 378 MB of free ram.
 
 endchoice
 
@@ -2755,3 +2911,4 @@ config FORCE_FAST_CHARGE
 	  A simple sysfs interface to force adapters that
 	  are detected as USB to charge as AC.
 endif
+

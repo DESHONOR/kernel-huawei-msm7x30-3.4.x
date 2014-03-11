@@ -38,6 +38,39 @@
 u32 dsi_irq;
 u32 esc_byte_ratio;
 
+void mipi_dsi_clk_enable(void)
+{
+	// empty //
+}
+void mipi_dsi_clk_disable(void)
+{
+	// empty //
+}
+void mipi_dsi_prepare_clocks(void)
+{
+	// empty //
+}
+void mipi_dsi_unprepare_clocks(void)
+{
+	// empty //
+}
+void mipi_dsi_prepare_ahb_clocks(void)
+{
+	// empty //
+}
+void mipi_dsi_unprepare_ahb_clocks(void)
+{
+	// empty //
+}
+void mipi_dsi_ahb_ctrl(u32 enable)
+{
+	// empty //
+}
+void mipi_dsi_phy_ctrl(int on)
+{
+	// empty //
+}
+
 static boolean tlmm_settings = FALSE;
 
 static int mipi_dsi_probe(struct platform_device *pdev);

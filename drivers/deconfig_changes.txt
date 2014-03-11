@@ -1,0 +1,1 @@
+disable CONFIG_FB_MSM_HDMI_ADV7520

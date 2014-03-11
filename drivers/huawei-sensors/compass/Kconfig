@@ -1,0 +1,31 @@
+#
+# Huawei Honor/U8800Pro Compass & Others Drivers Configuration
+#
+
+
+menu "Huawei Honor/U8800Pro Compass & Others Drivers"
+
+config HUAWEI_FEATURE_TPA2028D1_AMPLIFIER
+	tristate "tpa2028d1 amplifier"
+	depends on HUAWEI_KERNEL
+	default y
+	help
+	 tpa2028d1 amplifier used for audio.
+
+config HUAWEI_FEATURE_SENSORS_ST_LSM303DLH
+	tristate "LSM303DLH is a 6D sensors(gs&ms)"
+	depends on HUAWEI_KERNEL
+	default n
+	help
+	 The LSM303DLH is a system-in-package featuring a 3D
+	 digital linear acceleration sensor and a 3D digital magnetic sensor.
+
+config HUAWEI_FEATURE_SENSORS_AK8975
+	tristate "AK8975"
+	depends on HUAWEI_KERNEL
+	default n
+	help
+	  If you say yes here you get support for Asahi Kasei's 
+	  orientation sensor AK8975.
+
+endmenu

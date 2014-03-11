@@ -61,6 +61,13 @@ obj-$(CONFIG_FB_MSM_EBI2) += ebi2_lcd.o
 
 # LCDC
 obj-$(CONFIG_FB_MSM_LCDC) += lcdc.o
+		# Huawei device
+obj-$(CONFIG_FB_HUAWEI_LCDC_HX8357B) += lcdc_hx8357b_hvga.o
+obj-$(CONFIG_FB_HUAWEI_LCDC_HX8357C) += lcdc_hx8357c_hvga.o	
+obj-$(CONFIG_FB_HUAWEI_LCDC_R61529) += lcdc_truly_r61529_hvga.o
+obj-$(CONFIG_FB_HUAWEI_LCDC_NT35410) += lcdc_nt35410_hvga.o
+obj-$(CONFIG_FB_HUAWEI_LCDC_HX8347D) += lcdc_hx8347d_qvga.o
+obj-$(CONFIG_FB_HUAWEI_LCDC_HX8347G) += lcdc_hx8347g_qvga.o
 
 # LVDS
 obj-$(CONFIG_FB_MSM_LVDS) += lvds.o
@@ -72,12 +79,28 @@ obj-$(CONFIG_FB_MSM_MDDI) += msm_mddi.o
 # External MDDI
 msm_mddi_ext-objs := mddihost_e.o mddi_ext.o
 obj-$(CONFIG_FB_MSM_EXTMDDI) += msm_mddi_ext.o
+# Huawei Device
+obj-$(CONFIG_FB_HUAWEI_MDDI_NT35582) += mddi_nt35582.o
+obj-$(CONFIG_FB_HUAWEI_MDDI_NT35510) += mddi_nt35510.o
+obj-$(CONFIG_FB_HUAWEI_MDDI_NT35510_TYPE2) += mddi_nt35510_type2.o
+obj-$(CONFIG_FB_HUAWEI_MDDI_NT35560) += mddi_nt35560.o
+obj-$(CONFIG_FB_HUAWEI_MDDI_RSP61408) += mddi_rsp61408.o
+obj-$(CONFIG_FB_HUAWEI_MDDI_HX8369A) += mddi_hx8369a.o
+obj-$(CONFIG_FB_HUAWEI_MDDI_HX8357C) += mddi_hx8357c.o
+obj-y += hw_backlight.o
+obj-y += hw_lcd_common.o
+obj-y += lcd_hw_debug.o
 
 # MIPI gereric
 msm_mipi-objs := mipi_dsi.o mipi_dsi_host.o
 obj-$(CONFIG_FB_MSM_MIPI_DSI) += msm_mipi.o
 
 # MIPI manufacture
+
+obj-$(CONFIG_FB_HUAWEI_MIPI_DSI_NT35560) += mipi_nt35560_cmd_fwvga.o
+obj-$(CONFIG_FB_HUAWEI_MIPI_DSI_RSP61408) += mipi_rsp61408_cmd_wvga.o
+obj-$(CONFIG_FB_HUAWEI_MIPI_DSI_HX8357C) += mipi_hx8357c_cmd_hvga.o
+obj-$(CONFIG_FB_HUAWEI_MIPI_DSI_HX8369A) += mipi_hx8369a_cmd_wvga.o
 obj-$(CONFIG_FB_MSM_MIPI_DSI_TOSHIBA) += mipi_toshiba.o
 obj-$(CONFIG_FB_MSM_MIPI_DSI_NOVATEK) += mipi_novatek.o
 obj-$(CONFIG_FB_MSM_MIPI_DSI_ORISE) += mipi_orise.o

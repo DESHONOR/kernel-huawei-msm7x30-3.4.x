@@ -148,3 +148,6 @@ obj-$(CONFIG_MACH_ANCORA)  += sensors_ancora/
 obj-$(CONFIG_MACH_ANCORA_TMO)  += sensors_ancora/
 obj-$(CONFIG_MACH_APACHE)  += sensors_ancora/
 obj-$(CONFIG_MACH_ARIESVE)  += sensors_ariesve/
+
+obj-$(CONFIG_HUAWEI_HW_DEV_DCT) += devdetect/
+obj-$(CONFIG_HUAWEI_KERNEL)	+= huawei-sensors/

@@ -111,4 +111,9 @@ config I2C_DEBUG_BUS
 	  a problem with I2C support and want to see more of what is going
 	  on.
 
+config HUAWEI_I2C_DEBUG_TOOL
+	bool "I2C debug tools"
+	help
+	  used to debug i2c devices, example camera touch etc.. 
+
 endif # I2C

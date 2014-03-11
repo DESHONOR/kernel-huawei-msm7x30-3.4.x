@@ -18,7 +18,7 @@
 
 #include "mt9p012_km.h"
 #include <linux/kernel.h>
-
+#include <linux/bug.h>
 /*Micron settings from Applications for lower power consumption.*/
 struct reg_struct const mt9p012_km_reg_pat[2] = {
 	{ /* Preview */

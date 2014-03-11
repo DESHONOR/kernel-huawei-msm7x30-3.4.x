@@ -1,6 +1,6 @@
 CFLAGS_scm.o :=$(call as-instr,.arch_extension sec,-DREQUIRES_SEC=1)
 
-obj-y += io.o dma.o memory.o
+obj-y += io.o dma.o memory.o hardware_self_adapt.o
 ifndef CONFIG_ARM_ARCH_TIMER
 obj-y += timer.o
 endif
@@ -180,6 +180,10 @@ obj-$(CONFIG_MSM_SPM_V2) += spm-v2.o spm_devices.o
 obj-$(CONFIG_MSM_DMA_TEST) += dma_test.o
 obj-$(CONFIG_SURF_FFA_GPIO_KEYPAD) += keypad-surf-ffa.o
 
+#Huawei Keypad
+obj-$(CONFIG_HUAWEI_GPIO_KEYPAD) += keypad-huawei.o
+obj-$(CONFIG_HUAWEI_KEY_TEST) += huawei_key_test.o
+
 obj-$(CONFIG_ARCH_MSM7X01A) += board-halibut.o devices-msm7x01a.o clock-pcom-lookup.o
 obj-$(CONFIG_MACH_TROUT) += board-trout.o board-trout-gpio.o
 obj-$(CONFIG_MACH_TROUT) += board-trout-keypad.o board-trout-panel.o
@@ -266,6 +270,7 @@ obj-$(CONFIG_MACH_MSM8625_FFA) += board-msm7x27a.o board-7627a-all.o
 obj-$(CONFIG_MACH_MSM8625_EVT) += board-msm7x27a.o board-7627a-all.o
 obj-$(CONFIG_MACH_ANCORA) += board-ancora.o board-ancora-regulator.o samsung_vibrator.o
 obj-$(CONFIG_MACH_ANCORA_TMO) += board-ancora_tmo.o board-ancora_tmo-regulator.o samsung_vibrator.o
+obj-$(CONFIG_MACH_MSM8255_U8860) += board-honor.o board-honor-regulator.o huawei_key_test.o smem_sleep_log.o smem_vendor_huawei.o
 obj-$(CONFIG_MACH_APACHE) += board-apache.o board-apache-regulator.o samsung_vibrator.o
 obj-$(CONFIG_MACH_ARIESVE) += board-ariesve.o board-ariesve-regulator.o
 obj-$(CONFIG_ARCH_MSM7X30) += clock-local.o clock-7x30.o acpuclock-7x30.o clock-pll.o

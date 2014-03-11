@@ -27,6 +27,7 @@
 #ifndef _LINUX_I2C_H
 #define _LINUX_I2C_H
 
+#include <linux/module.h>
 #include <linux/types.h>
 #ifdef __KERNEL__
 #include <linux/mod_devicetable.h>
@@ -389,6 +390,11 @@ struct i2c_adapter {
 
 	struct mutex userspace_clients_lock;
 	struct list_head userspace_clients;
+
+#ifdef CONFIG_HUAWEI_I2C_DEBUG_TOOL
+	u8 bus_debug_flag;
+	unsigned short debug_addr;
+#endif
 };
 #define to_i2c_adapter(d) container_of(d, struct i2c_adapter, dev)
 

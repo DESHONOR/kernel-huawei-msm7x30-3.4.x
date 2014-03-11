@@ -59,7 +59,7 @@ struct voice_data {
 };
 
 static struct voice_data voice;
-extern int on_call_flag;
+//extern int on_call_flag;
 
 static int voice_cmd_device_info(struct voice_data *);
 static int voice_cmd_acquire_done(struct voice_data *);
@@ -367,7 +367,7 @@ static void voice_auddev_cb_function(u32 evt_id,
 	default:
 		MM_ERR("UNKNOWN EVENT\n");
 	}
-	on_call_flag = v->v_call_status;
+	//on_call_flag = v->v_call_status;
 	return;
 }
 EXPORT_SYMBOL(voice_auddev_cb_function);

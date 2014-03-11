@@ -1,0 +1,9 @@
+#
+# Makefile for Huawei Honor/U8800Pro Compass & Others Drivers
+#
+
+obj-$(CONFIG_HUAWEI_FEATURE_TPA2028D1_AMPLIFIER)	+= tpa2028d1.o
+obj-$(CONFIG_HUAWEI_FEATURE_SENSORS_ST_LSM303DLH) += st303_compass.o
+obj-$(CONFIG_HUAWEI_FEATURE_SENSORS_ST_LSM303DLH) += st303_gs.o
+obj-$(CONFIG_HUAWEI_FEATURE_SENSORS_AK8975)   += akm8975.o
+

@@ -1,4 +1,4 @@
-/* Copyright (c) 2009-2011, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2009-2011, Code Aurora Forum. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -19,15 +19,23 @@
 #include <linux/bitops.h>
 #include <linux/delay.h>
 #include <linux/mutex.h>
-#include <linux/gpio.h>
 
 #include <linux/mfd/pm8xxx/core.h>
 #include <linux/mfd/pm8xxx/gpio.h>
 #include <linux/input/pmic8xxx-keypad.h>
-
-#ifdef CONFIG_PHANTOM_KP_FILTER
-#include <linux/phantom_kp_filter.h>
-#endif
+/*< DTS2012010403939 fengwei 20120111 begin */
+#include <asm/mach-types.h>
+/* DTS2012010403939 fengwei 20120111 end >*/
+/*< DTS2012021602342 zhongjinrong 20120224 begin */
+/* <DTS2012022003670 sunkai 20120220 begin */
+#include <linux/hardware_self_adapt.h>
+/* DTS2012022003670 sunkai 20120220 end> */
+/* DTS2012021602342 zhongjinrong 20120224 end >*/
+/* < DTS2012050806572 huzheng 20120518 begin */
+#include <asm/mach-types.h>
+#define PM8058_GPIO_PM_TO_SYS(pm_gpio)     (pm_gpio + NR_GPIO_IRQS)
+#define PM_GPIO_13	PM8058_GPIO_PM_TO_SYS(12)
+/* DTS2012050806572 huzheng 20120518 end > */
 
 #define PM8XXX_MAX_ROWS		18
 #define PM8XXX_MAX_COLS		8
@@ -88,17 +96,6 @@
 
 #define KEYP_CLOCK_FREQ			32768
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
-#define GPIO_HOMEKEY			51
-#define MSM_GPIO_KEY_IRQ		MSM_GPIO_TO_INT(GPIO_HOMEKEY)
-static int homekey_prev_state = 0;	/* Previous HOME key status */
-#endif
-
-#ifdef CONFIG_PHANTOM_KP_FILTER
-unsigned long homekey_report_time;	/* Time (jiffies) when the collected key presses will be reported */
-struct timer_list homekey_timer;	/* Timer for the collected key presses delayed reporting */
-#endif
-
 /**
  * struct pmic8xxx_kp - internal keypad data structure
  * @pdata - keypad platform data pointer
@@ -111,6 +108,11 @@ struct timer_list homekey_timer;	/* Timer for the collected key presses delayed 
  * @stuckstate - present state when key stuck irq
  * @ctrl_reg - control register value
  */
+/*< DTS2012021602342 zhongjinrong 20120224 begin */
+/* <DTS2012022003670 sunkai 20120220 begin */
+extern bool mmi_keystate[255];
+/* DTS2012022003670 sunkai 20120220 end> */
+/* DTS2012021602342 zhongjinrong 20120224 end >*/
 struct pmic8xxx_kp {
 	const struct pm8xxx_keypad_platform_data *pdata;
 	struct input_dev *input;
@@ -122,7 +124,6 @@ struct pmic8xxx_kp {
 	struct device *dev;
 	u16 keystate[PM8XXX_MAX_ROWS];
 	u16 stuckstate[PM8XXX_MAX_ROWS];
-	struct timer_list timer;
 
 	u8 ctrl_reg;
 };
@@ -210,25 +211,6 @@ static int pmic8xxx_chk_sync_read(struct pmic8xxx_kp *kp)
 	return rc;
 }
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
-int key_pressed;
-extern struct class *sec_class;
-/* sys fs */
-struct class *key_class;
-EXPORT_SYMBOL(key_class);
-struct device *key_dev;
-EXPORT_SYMBOL(key_dev);
-
-static ssize_t key_show(struct device *dev, struct device_attribute *attr, char *buf);
-static DEVICE_ATTR(key , S_IRUGO | S_IXOTH, key_show, NULL);
-/* sys fs */
-
-static ssize_t key_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%d\n", key_pressed );
-}
-#endif
-
 static int pmic8xxx_kp_read_data(struct pmic8xxx_kp *kp, u16 *state,
 					u16 data_reg, int read_rows)
 {
@@ -253,6 +235,13 @@ static int pmic8xxx_kp_read_matrix(struct pmic8xxx_kp *kp, u16 *new_state,
 {
 	int rc, read_rows;
 	u8 scan_val;
+/*< DTS2012021602342 zhongjinrong 20120224 begin */
+/*< DTS2011092601370 zhongjinrong 20110926 begin */
+#ifdef CONFIG_HUAWEI_KERNEL
+	int i=0;
+#endif
+/* DTS2011092601370 zhongjinrong 20119026 end >*/
+/* DTS2012021602342 zhongjinrong 20120224 end >*/
 
 	if (kp->pdata->num_rows < PM8XXX_MIN_ROWS)
 		read_rows = PM8XXX_MIN_ROWS;
@@ -269,6 +258,23 @@ static int pmic8xxx_kp_read_matrix(struct pmic8xxx_kp *kp, u16 *new_state,
 				"Error reading KEYP_OLD_DATA, rc=%d\n", rc);
 			return rc;
 		}
+/*< DTS2012021602342 zhongjinrong 20120224 begin */
+/*< DTS2011092601370 zhongjinrong 20110926 begin */
+/*it is reslove the problem of ghost , becuse the six column  just one key */ 
+#ifdef CONFIG_HUAWEI_KERNEL
+		if(machine_is_msm8255_u8730())
+		{
+			if(~old_state[0] &(1<<(kp->pdata->num_cols-1)))
+			{
+				for(i=1;i< kp->pdata->num_rows;i++)
+				{
+					old_state[i]  |= 1<<(kp->pdata->num_cols-1);
+				}
+			}
+		}
+#endif
+/* DTS2011092601370 zhongjinrong 20119026 end >*/
+/* DTS2012021602342 zhongjinrong 20120224 end >*/
 	}
 
 	rc = pmic8xxx_kp_read_data(kp, new_state, KEYP_RECENT_DATA,
@@ -278,7 +284,24 @@ static int pmic8xxx_kp_read_matrix(struct pmic8xxx_kp *kp, u16 *new_state,
 			"Error reading KEYP_RECENT_DATA, rc=%d\n", rc);
 		return rc;
 	}
+/*< DTS2012021602342 zhongjinrong 20120224 begin */
+/*< DTS2011092601370 zhongjinrong 20110926 begin */
+/*it is reslove the problem of ghost , becuse the six column  just one key */ 
+#ifdef CONFIG_HUAWEI_KERNEL
+		if(machine_is_msm8255_u8730())
+		{
+			if(~new_state[0] &(1<<(kp->pdata->num_cols-1)))
+			{
+				for(i=1;i< kp->pdata->num_rows-1;i++)
+				{
+					new_state[i] |= 1<<(kp->pdata->num_cols-1);
+				}
+			}
+		}
 
+#endif
+/* DTS2011092601370 zhongjinrong 20119026 end >*/
+/* DTS2012021602342 zhongjinrong 20120224 end >*/
 	/* 4 * 32KHz clocks */
 	udelay((4 * DIV_ROUND_UP(USEC_PER_SEC, KEYP_CLOCK_FREQ)) + 1);
 
@@ -316,19 +339,28 @@ static void __pmic8xxx_kp_scan_matrix(struct pmic8xxx_kp *kp, u16 *new_state,
 					"pressed" : "released");
 
 			code = MATRIX_SCAN_CODE(row, col, PM8XXX_ROW_SHIFT);
+			/*< DTS2012010403939 fengwei 20120111 begin */
 
-			input_event(kp->input, EV_MSC, MSC_SCAN, code);
-			input_report_key(kp->input,
-					kp->keycodes[code],
-					!(new_state[row] & (1 << col)));
-
-			input_sync(kp->input);
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
-			key_pressed=!(new_state[row] & (1 << col));
-#ifdef KEY_LOG_TEST
-			printk("[key] code %d, %d \n", kp->keycodes[code], key_pressed);
-#endif
-#endif
+			/*reduce invalid input event*/
+#ifdef CONFIG_HUAWEI_KERNEL	
+            if (kp->keycodes[code])
+            {
+#endif	
+				input_event(kp->input, EV_MSC, MSC_SCAN, code);
+				input_report_key(kp->input,
+						kp->keycodes[code],
+						!(new_state[row] & (1 << col)));
+				/*< DTS2012021602342 zhongjinrong 20120224 begin */
+				/* <DTS2012022003670 sunkai 20120220 begin */
+				/* use mmi_keystate save the key state */
+	       		mmi_keystate[kp->keycodes[code]] = (!(new_state[row]&(1<<col)))? MMI_KEY_DOWN :MMI_KEY_UP ;
+	   			/* DTS2012022003670 sunkai 20120220 end> */
+				/* DTS2012021602342 zhongjinrong 20120224 end >*/
+				input_sync(kp->input);
+#ifdef CONFIG_HUAWEI_KERNEL		
+            }
+#endif	
+			/* DTS2012010403939 fengwei 20120111 end >*/
 		}
 	}
 }
@@ -338,6 +370,27 @@ static bool pmic8xxx_detect_ghost_keys(struct pmic8xxx_kp *kp, u16 *new_state)
 	int row, found_first = -1;
 	u16 check, row_state;
 
+/*< DTS2012010403939 fengwei 20120111 begin */
+/*
+	* for u8860, c8860 and u8860lp, add the codes means:
+	* when volumn-up and volumn-down keys are pressed in the sametime,
+	* the state of kp scan matrix read from the register is wrong because of hardwared's wrong,
+	* and it will make system think the state as ghost keys mistakenly , 
+	* so these board ids should not be check for ghost keys
+*/
+#ifdef CONFIG_HUAWEI_KERNEL
+	if (machine_is_msm8255_u8860() 
+	 || machine_is_msm8255_c8860() 
+	 || machine_is_msm8255_u8860lp() 
+     /* < DTS2012022905490 ganfan 20120301 begin */
+     || machine_is_msm8255_u8860_r()
+     /* DTS2012022905490 ganfan 20120301 end > */
+	 || machine_is_msm8255_u8860_51())
+	{
+		return 0;
+	}
+#endif
+/* DTS2012010403939 fengwei 20120111 end >*/
 	check = 0;
 	for (row = 0; row < kp->pdata->num_rows; row++) {
 		row_state = (~new_state[row]) &
@@ -428,131 +481,6 @@ static irqreturn_t pmic8xxx_kp_stuck_irq(int irq, void *data)
 	return IRQ_HANDLED;
 }
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
-static void gpio_key_report(struct pmic8xxx_kp *kp, int state)
-{
-	input_report_key(kp->input, KEY_HOME, state);
-	input_sync(kp->input);
-
-	key_pressed = state;
-
-#ifdef KEY_LOG_TEST
-	printk("[key] code %d, %d \n", KEY_HOME, key_pressed);
-#endif
-}
-
-static int gpio_key_scan(struct pmic8xxx_kp *kp)
-{
-	int state;
-
-	/* Get the current HOME key status */
-	state = !(gpio_get_value(GPIO_HOMEKEY));
-
-	/* If the key press status is changed */
-	if (state != homekey_prev_state) {
-		/* Report the new key status */
-		gpio_key_report(kp, state);
-
-		/* Save the previous key status */
-		homekey_prev_state = state;
-	} else {
-		dev_dbg(kp->dev, "Invalid HOME key pressed (the status is not changed)\n");
-	}
-
-	return 0;
-}
-#endif
-
-#ifdef CONFIG_PHANTOM_KP_FILTER
-/*
- * Function to scan the current incoming HOME key state and collect it
- * for the delayed reporting
- */
-static int gpio_pkf_key_scan(struct pmic8xxx_kp *kp)
-{
-	int state;
-
-	/* Lock the mutex */
-	mutex_lock(&pkf_home_mutex);
-
-	/* If the last key presses have been reported, then start to collect
-	 * the next key presses */
-	if (time_after(jiffies, homekey_report_time)) {
-		clear_homekey_states();
-		pkf_home_inc_kp->irqs_count = 1;
-	} else {
-		pkf_home_inc_kp->irqs_count++;
-	}
-
-	/* If the incoming irq is within the max number of allowed incoming interrupts */
-	if (pkf_home_inc_kp->irqs_count <= pkf_home->allowed_irqs) {
-		/* Get the current key status */
-		state = !(gpio_get_value(GPIO_HOMEKEY));
-
-		/* If the key press state is changed */
-		if (state != homekey_prev_state) {
-			/* Collect the current key status */
-			collect_homekey_status(state);
-
-			/* If this is the first collected key press, then start
-			 * the timer to report the key presses at report_time */
-			if (pkf_home_inc_kp->irqs_count == 1) {
-				homekey_report_time = jiffies + msecs_to_jiffies(pkf_home->report_wait);
-				mod_timer(&homekey_timer, homekey_report_time);
-			}
-
-			/* Save the previous key status */
-			homekey_prev_state = state;
-		} else {
-			count_ignored_home_kp();
-			dev_dbg(kp->dev, "Invalid HOME key pressed (the status is not changed) "
-					"(irqs_count = %u)\n", pkf_home_inc_kp->irqs_count);
-		}
-	} else {
-		count_ignored_home_kp();
-		dev_dbg(kp->dev, "Ignoring possible phantom HOME key press irq "
-					"(irqs_count = %u)\n", pkf_home_inc_kp->irqs_count);
-	}
-
-	/* Unlock the mutex */
-	mutex_unlock(&pkf_home_mutex);
-
-	return 0;
-}
-
-/*
- * Function to report the previously collected HOME key presses
- */
-static void gpio_pkf_key_report(unsigned long data)
-{
-	struct pmic8xxx_kp *kp = (struct pmic8xxx_kp *)data;
-	int i;
-
-	/* Lock the mutex */
-	mutex_lock(&pkf_home_mutex);
-
-	/* Report the collected key presses only if may considered valid */
-	if (pkf_home_inc_kp->irqs_count <= pkf_home->allowed_irqs) {
-		for (i = 0; i < pkf_home_inc_kp->states_count; i++)
-			gpio_key_report(kp, get_homekey_status(i));
-	} else {
-		count_ignored_home_kp();
-		dev_dbg(kp->dev, "Aborting the report of possible phantom HOME key presses "
-					"(irqs_count = %u)\n", pkf_home_inc_kp->irqs_count);
-	}
-
-	/* Unlock the mutex */
-	mutex_unlock(&pkf_home_mutex);
-}
-#endif
-
-static void gpio_key_timer(unsigned long _data)
-{
-	struct pmic8xxx_kp *kp = (struct pmic8xxx_kp *)_data;
-
-	gpio_key_scan(kp);
-}
-
 static irqreturn_t pmic8xxx_kp_irq(int irq, void *data)
 {
 	struct pmic8xxx_kp *kp = data;
@@ -573,30 +501,6 @@ static irqreturn_t pmic8xxx_kp_irq(int irq, void *data)
 
 	return IRQ_HANDLED;
 }
-
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
-static irqreturn_t pmic8xxx_gpiokey_irq(int irq, void *data)
-{
-	struct pmic8xxx_kp *kp = data;
-
-#ifdef CONFIG_PHANTOM_KP_FILTER
-	/* If the phantom HOME key presses filtering is enabled,
-	 * scan the incoming key status with the alternative function */
-	if (pkf_home->enabled) {
-		gpio_pkf_key_scan(kp);
-
-		return IRQ_HANDLED;
-	}
-#endif
-
-	if (kp->pdata->debounce_ms_gpiokey)
-		mod_timer(&kp->timer, jiffies + msecs_to_jiffies(kp->pdata->debounce_ms_gpiokey));
-	else
-		gpio_key_scan(kp);
-
-	return IRQ_HANDLED;
-}
-#endif
 
 static int __devinit pmic8xxx_kpd_init(struct pmic8xxx_kp *kp)
 {
@@ -657,6 +561,13 @@ static int  __devinit pmic8xxx_kp_config_gpio(int gpio_start, int num_gpios,
 		return -EINVAL;
 
 	for (i = 0; i < num_gpios; i++) {
+	    /* < DTS2012050806572 huzheng 20120518 begin */
+	    if ((machine_is_msm8255_c8860()) && (PM_GPIO_13 == (gpio_start + i)))
+	    {
+		    /* PM_GPIO_13 is used for RF in C8860, should not be configured here */
+		    continue;
+		}
+		/* DTS2012050806572 huzheng 20120518 end > */
 		rc = pm8xxx_gpio_config(gpio_start + i, gpio_config);
 		if (rc) {
 			dev_err(kp->dev, "%s: FAIL pm8xxx_gpio_config():"
@@ -803,14 +714,6 @@ static int __devinit pmic8xxx_kp_probe(struct platform_device *pdev)
 		goto err_alloc_device;
 	}
 
-	setup_timer(&kp->timer, gpio_key_timer, (unsigned long)kp);
-
-#ifdef CONFIG_PHANTOM_KP_FILTER
-	/* Timer setup for the collected HOME key presses delayed reporting */
-	setup_timer(&homekey_timer, gpio_pkf_key_report, (unsigned long)kp);
-	homekey_report_time = jiffies;
-#endif
-
 	kp->key_sense_irq = platform_get_irq(pdev, 0);
 	if (kp->key_sense_irq < 0) {
 		dev_err(&pdev->dev, "unable to get keypad sense irq\n");
@@ -851,8 +754,6 @@ static int __devinit pmic8xxx_kp_probe(struct platform_device *pdev)
 
 	input_set_capability(kp->input, EV_MSC, MSC_SCAN);
 	input_set_drvdata(kp->input, kp);
-	input_set_capability(kp->input, EV_KEY, KEY_END); // for Galaxy S+
-	input_set_capability(kp->input, EV_KEY, KEY_HOME); // for ancora
 
 	/* initialize keypad state */
 	memset(kp->keystate, 0xff, sizeof(kp->keystate));
@@ -892,19 +793,6 @@ static int __devinit pmic8xxx_kp_probe(struct platform_device *pdev)
 		goto err_req_stuck_irq;
 	}
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
-	rc = request_threaded_irq( MSM_GPIO_KEY_IRQ ,
-			NULL, pmic8xxx_gpiokey_irq, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING  , "keypad_gpio", kp);
-
-	if (rc < 0) {
-		dev_err(&pdev->dev, "failed to request gpio key irq\n");
-		goto err_gpio_config;
-	}
-
-	rc = irq_set_irq_wake(MSM_GPIO_KEY_IRQ, 1);
-	if (rc)
-		printk("[HOMEKEY] register wakeup source failed\n");
-
 	rc = pmic8xxx_kp_read_u8(kp, &ctrl_val, KEYP_CTRL);
 	if (rc < 0) {
 		dev_err(&pdev->dev, "failed to read KEYP_CTRL register\n");
@@ -919,23 +807,7 @@ static int __devinit pmic8xxx_kp_probe(struct platform_device *pdev)
 		goto err_pmic_reg_read;
 	}
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
-	/* sys fs */
-	key_class = class_create(THIS_MODULE, "key");
-	if (IS_ERR(key_class))
-		pr_err("Failed to create class(key)!\n");
-
-	key_dev = device_create(key_class, NULL, 0, NULL, "key");
-	if (IS_ERR(key_dev))
-		pr_err("Failed to create device(key)!\n");
-
-	if (device_create_file(key_dev, &dev_attr_key) < 0)
-		pr_err("Failed to create device file(%s)!\n", dev_attr_key.attr.name);
-	/* sys fs */
-#endif
-
 	device_init_wakeup(&pdev->dev, pdata->wakeup);
-#endif
 
 	return 0;
 
@@ -974,7 +846,7 @@ static int pmic8xxx_kp_suspend(struct device *dev)
 	struct input_dev *input_dev = kp->input;
 
 	if (device_may_wakeup(dev)) {
-			enable_irq_wake(kp->key_sense_irq);
+		enable_irq_wake(kp->key_sense_irq);
 	} else {
 		mutex_lock(&input_dev->mutex);
 
@@ -994,7 +866,7 @@ static int pmic8xxx_kp_resume(struct device *dev)
 	struct input_dev *input_dev = kp->input;
 
 	if (device_may_wakeup(dev)) {
-			disable_irq_wake(kp->key_sense_irq);
+		disable_irq_wake(kp->key_sense_irq);
 	} else {
 		mutex_lock(&input_dev->mutex);
 
@@ -1020,7 +892,18 @@ static struct platform_driver pmic8xxx_kp_driver = {
 		.pm = &pm8xxx_kp_pm_ops,
 	},
 };
-module_platform_driver(pmic8xxx_kp_driver);
+
+static int __init pmic8xxx_kp_init(void)
+{
+	return platform_driver_register(&pmic8xxx_kp_driver);
+}
+module_init(pmic8xxx_kp_init);
+
+static void __exit pmic8xxx_kp_exit(void)
+{
+	platform_driver_unregister(&pmic8xxx_kp_driver);
+}
+module_exit(pmic8xxx_kp_exit);
 
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("PMIC8XXX keypad driver");

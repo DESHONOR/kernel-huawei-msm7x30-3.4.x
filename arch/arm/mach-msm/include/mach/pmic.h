@@ -1,4 +1,4 @@
-/* Copyright (c) 2009-2011, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2009-2011, Code Aurora Forum. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -107,6 +107,17 @@ enum ledtype {
 	LED_LCD,
 	LED_KEYPAD,
 };
+/*<BU5D08276 sibingsong 20100419 begin*/
+#ifdef CONFIG_HUAWEI_KERNEL
+typedef enum
+{
+   PM_LOW_CURRENT_LED_DRV0,
+   PM_LOW_CURRENT_LED_DRV1,
+   PM_LOW_CURRENT_LED_DRV2,
+   PM_LOW_CURRENT_LED_DRV_INVALID
+} pm_low_current_led_type;
+#endif
+/*BU5D08276 sibingsong 20100419 end>*/
 
 enum flash_led_mode {
 	FLASH_LED_MODE__MANUAL,
@@ -676,6 +687,28 @@ int pmic_mic_is_en(uint *enabled);
 int pmic_mic_set_volt(enum mic_volt vol);
 int pmic_mic_get_volt(enum mic_volt *voltage);
 int pmic_set_led_intensity(enum ledtype type, int level);
+/*< DTS2011061001175 jiaoshuangwei 20110725 begin */
+/*add rpc interface for key light*/
+#ifdef CONFIG_HUAWEI_KERNEL
+int pmic_set_keyled_intensity(enum ledtype type, int level);
+#endif
+/* DTS2011061001175 jiaoshuangwei 20110725 end >*/
+/*<BU5D08276 sibingsong 20100419 begin*/
+#ifdef CONFIG_HUAWEI_KERNEL
+int pmic_set_low_current_led_intensity(pm_low_current_led_type type, int level);
+#endif
+/*BU5D08276 sibingsong 20100419 end>*/
+/* < DTS2010092701499  zhangtao 20100927 begin */
+#ifdef CONFIG_HUAWEI_KERNEL
+int pmic_set_mpp6_led_intensity(int level);
+/* < DTS2010111603970 zhangtao 20101116 begin */
+/*add rpc interface for PTT light*/
+#ifdef CONFIG_HUAWEI_FEATURE_PTT_KEY_LIGHT
+int pmic_set_ptt_current_led_intensity(int level);
+#endif
+#endif
+/* DTS2010111603970 zhangtao 20101116 end > */
+/* DTS2010092701499  zhangtao 20100927 end > */
 int pmic_flash_led_set_current(uint16_t milliamps);
 int pmic_flash_led_set_mode(enum flash_led_mode mode);
 int pmic_flash_led_set_polarity(enum flash_led_pol pol);

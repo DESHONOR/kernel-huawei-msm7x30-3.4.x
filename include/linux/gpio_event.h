@@ -18,6 +18,8 @@
 
 #include <linux/input.h>
 
+int get_slide_pressed(void);
+
 struct gpio_event_input_devs {
 	int count;
 	struct input_dev *dev[];

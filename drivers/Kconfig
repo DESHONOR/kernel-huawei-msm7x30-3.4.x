@@ -165,4 +165,9 @@ if MACH_APACHE
 source "drivers/sensors_ancora/Kconfig"
 endif
 
+
+source "drivers/devdetect/Kconfig"
+source "drivers/huawei-sensors/Kconfig"
+
+
 endmenu

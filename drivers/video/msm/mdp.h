@@ -47,6 +47,11 @@ extern struct mdp_csc_cfg mdp_csc_convert[4];
 extern struct mdp_csc_cfg_data csc_cfg_matrix[];
 extern struct workqueue_struct *mdp_hist_wq;
 
+#ifdef CONFIG_HUAWEI_KERNEL
+/* Extern the mdp_pipe_ctrl_mutex for process_lcd_table function */
+extern struct semaphore mdp_pipe_ctrl_mutex;
+#endif
+
 extern uint32 mdp_intr_mask;
 
 #define MDP4_REVISION_V1		0

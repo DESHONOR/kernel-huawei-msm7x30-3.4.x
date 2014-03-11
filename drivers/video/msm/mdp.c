@@ -46,6 +46,39 @@
 
 uint32 mdp4_extn_disp;
 
+void mipi_dsi_clk_enable(void)
+{
+	// empty //
+}
+void mipi_dsi_clk_disable(void)
+{
+	// empty //
+}
+void mipi_dsi_prepare_clocks(void)
+{
+	// empty //
+}
+void mipi_dsi_unprepare_clocks(void)
+{
+	// empty //
+}
+void mipi_dsi_prepare_ahb_clocks(void)
+{
+	// empty //
+}
+void mipi_dsi_unprepare_ahb_clocks(void)
+{
+	// empty //
+}
+void mipi_dsi_ahb_ctrl(u32 enable)
+{
+	// empty //
+}
+void mipi_dsi_phy_ctrl(int on)
+{
+	// empty //
+}
+
 static struct clk *mdp_clk;
 static struct clk *mdp_pclk;
 static struct clk *mdp_lut_clk;

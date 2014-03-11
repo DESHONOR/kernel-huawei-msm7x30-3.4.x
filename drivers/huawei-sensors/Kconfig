@@ -1,0 +1,8 @@
+menu "Huawei Honor/U8800Pro Sensors Drivers"
+
+source "drivers/huawei-sensors/accelerometer/Kconfig"
+source "drivers/huawei-sensors/compass/Kconfig"
+source "drivers/huawei-sensors/gyroscope/Kconfig"
+source "drivers/huawei-sensors/proximity/Kconfig"
+
+endmenu

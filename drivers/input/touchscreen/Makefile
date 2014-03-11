@@ -89,3 +89,8 @@ obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_FW_UPDATE) 	+= synaptics_fw_update.o
 obj-$(CONFIG_TOUCHSCREEN_MELFAS_MCS8000)	+= ancora/
 obj-$(CONFIG_TOUCHSCREEN_MXT224)	+= mxt224e.o
 obj-$(CONFIG_TOUCHSCREEN_QT602240)	+= qt602240_ts.o
+
+#Huawei Honor/U8800Pro Touchscreen drivers
+obj-$(CONFIG_HUAWEI_FEATURE_AT42QT_TS)  += atmel_i2c_rmi_QT602240.o
+obj-$(CONFIG_HUAWEI_FEATURE_RMI_TOUCH)  += synaptics_i2c_rmi_1564.o
+obj-$(CONFIG_HUAWEI_MELFAS_TOUCHSCREEN)  += melfas_i2c_ts.o
